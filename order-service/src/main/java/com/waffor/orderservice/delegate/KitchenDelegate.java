@@ -27,9 +27,10 @@ public class KitchenDelegate implements JavaDelegate {
         
         log.info("[Camunda] Order #{}: Calling Kitchen Service...", orderId);
 
+        String kitchenHost = System.getenv("KITCHEN_SERVICE_HOST") != null ? System.getenv("KITCHEN_SERVICE_HOST") : "localhost";
         try {
             restTemplate.postForEntity(
-                    "http://localhost:8082/api/kitchen/prepare",
+                    "http://" + kitchenHost + ":8082/api/kitchen/prepare",
                     request,
                     Map.class
             );

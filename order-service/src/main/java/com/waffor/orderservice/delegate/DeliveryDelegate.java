@@ -26,9 +26,10 @@ public class DeliveryDelegate implements JavaDelegate {
         
         log.info("[Camunda] Order #{}: Calling Delivery Service...", orderId);
 
+        String deliveryHost = System.getenv("DELIVERY_SERVICE_HOST") != null ? System.getenv("DELIVERY_SERVICE_HOST") : "localhost";
         try {
             restTemplate.postForEntity(
-                    "http://localhost:8083/api/delivery/assign",
+                    "http://" + deliveryHost + ":8083/api/delivery/assign",
                     request,
                     Map.class
             );

@@ -27,9 +27,10 @@ public class PaymentDelegate implements JavaDelegate {
         
         log.info("[Camunda] Order #{}: Calling Payment Service...", orderId);
 
+        String paymentHost = System.getenv("PAYMENT_SERVICE_HOST") != null ? System.getenv("PAYMENT_SERVICE_HOST") : "localhost";
         try {
             ResponseEntity<Map> response = restTemplate.postForEntity(
-                    "http://localhost:8081/api/payments/process",
+                    "http://" + paymentHost + ":8081/api/payments/process",
                     request,
                     Map.class
             );

@@ -294,35 +294,35 @@ status dashboard
 7 Log statements printing the
 order processing flow
 
-☐
+[x]
 
 8 Submission: API LLD
 
 document
 
-☐
+[x]
 
 9 Submission: Database
 Design document
 
-☐
+[x]
 
 10 Submission: Frontend
 
 screenshots
 
-☐
+[x]
 
 11 Submission: Log output of
 
 order flow
 
-☐
+[x]
 
 12 Submission: AI-generated
 Implementation Report
 
-☐
+[x]
 
 Good luck with your practice! Be prepared to build a similar architecture (but for a
 completely different business domain) during your in-person Round 2 assessment.
