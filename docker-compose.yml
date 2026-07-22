@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: food_order_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: food_order_db
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - food_order_net
+
+  activemq:
+    image: rmohr/activemq:5.15.9
+    container_name: food_order_activemq
+    ports:
+      - "61616:61616" # JMS port
+      - "8161:8161"   # Web Console port
+    networks:
+      - food_order_net
+
+volumes:
+  mysql_data:
+
+networks:
+  food_order_net:
+    driver: bridge

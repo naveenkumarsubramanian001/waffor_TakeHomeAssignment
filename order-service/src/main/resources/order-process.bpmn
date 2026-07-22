@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0u990y5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1">
+  <bpmn:process id="order-process" name="Order Processing" isExecutable="true" camunda:historyTimeToLive="P30D">
+    <bpmn:startEvent id="StartEvent_1" name="Order Received">
+      <bpmn:outgoing>Flow_0cbfyq1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0cbfyq1" sourceRef="StartEvent_1" targetRef="Activity_UpdatePlaced" />
+    
+    <bpmn:serviceTask id="Activity_UpdatePlaced" name="Update Status: PAYMENT_PROCESSING" camunda:delegateExpression="${updateStatusDelegate}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">PAYMENT_PROCESSING</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cbfyq1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1u8kxkq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:sequenceFlow id="Flow_1u8kxkq" sourceRef="Activity_UpdatePlaced" targetRef="Activity_ProcessPayment" />
+    
+    <bpmn:serviceTask id="Activity_ProcessPayment" name="Process Payment" camunda:delegateExpression="${paymentDelegate}">
+      <bpmn:incoming>Flow_1u8kxkq</bpmn:incoming>
+      <bpmn:outgoing>Flow_0h6n66n</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_1q3xq7q" name="Payment Success?">
+      <bpmn:incoming>Flow_0h6n66n</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h6n8a8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0q9a2m1</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0h6n66n" sourceRef="Activity_ProcessPayment" targetRef="Gateway_1q3xq7q" />
+    
+    <bpmn:sequenceFlow id="Flow_1h6n8a8" name="Yes" sourceRef="Gateway_1q3xq7q" targetRef="Activity_UpdateKitchenPrep">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentStatus == 'SUCCESS'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:serviceTask id="Activity_UpdateKitchenPrep" name="Update Status: KITCHEN_PREP" camunda:delegateExpression="${updateStatusDelegate}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">KITCHEN_PREP</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1h6n8a8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0y6n1c2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:sequenceFlow id="Flow_0y6n1c2" sourceRef="Activity_UpdateKitchenPrep" targetRef="Activity_PrepareKitchen" />
+    
+    <bpmn:serviceTask id="Activity_PrepareKitchen" name="Prepare Food" camunda:delegateExpression="${kitchenDelegate}">
+      <bpmn:incoming>Flow_0y6n1c2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a8n9m4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:sequenceFlow id="Flow_1a8n9m4" sourceRef="Activity_PrepareKitchen" targetRef="Activity_UpdateOutForDelivery" />
+    
+    <bpmn:serviceTask id="Activity_UpdateOutForDelivery" name="Update Status: OUT_FOR_DELIVERY" camunda:delegateExpression="${updateStatusDelegate}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">OUT_FOR_DELIVERY</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a8n9m4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0c9m1v5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:sequenceFlow id="Flow_0c9m1v5" sourceRef="Activity_UpdateOutForDelivery" targetRef="Activity_AssignDelivery" />
+    
+    <bpmn:serviceTask id="Activity_AssignDelivery" name="Assign Delivery" camunda:delegateExpression="${deliveryDelegate}">
+      <bpmn:incoming>Flow_0c9m1v5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x2y3z4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:sequenceFlow id="Flow_1x2y3z4" sourceRef="Activity_AssignDelivery" targetRef="Activity_UpdateDelivered" />
+    
+    <bpmn:serviceTask id="Activity_UpdateDelivered" name="Update Status: DELIVERED" camunda:delegateExpression="${updateStatusDelegate}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">DELIVERED</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1x2y3z4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a2b3c4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:endEvent id="Event_1a2b3c4" name="Order Delivered">
+      <bpmn:incoming>Flow_1a2b3c4</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1a2b3c4" sourceRef="Activity_UpdateDelivered" targetRef="Event_1a2b3c4" />
+
+    <!-- Failure path -->
+    <bpmn:sequenceFlow id="Flow_0q9a2m1" name="No" sourceRef="Gateway_1q3xq7q" targetRef="Activity_UpdateCancelled">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${paymentStatus == 'FAILED'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    
+    <bpmn:serviceTask id="Activity_UpdateCancelled" name="Update Status: CANCELLED" camunda:delegateExpression="${updateStatusDelegate}">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="status">CANCELLED</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0q9a2m1</bpmn:incoming>
+      <bpmn:outgoing>Flow_9x8y7z6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:endEvent id="Event_9x8y7z6" name="Order Cancelled">
+      <bpmn:incoming>Flow_9x8y7z6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_9x8y7z6" sourceRef="Activity_UpdateCancelled" targetRef="Event_9x8y7z6" />
+    
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="order-process">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="142" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
