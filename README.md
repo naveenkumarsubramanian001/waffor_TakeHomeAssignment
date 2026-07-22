@@ -8,11 +8,12 @@ Welcome to the **Online Food Order Processing System** repository. This is an ev
 
 This section displays the React application interface for order submission and real-time dashboard monitoring.
 
+
 > [!NOTE]
 > Add your screenshot image files inside the [`./frontend images/`](file:///Users/dynamight/work/waffor_takehome_assignment/frontend%20images) folder (e.g. `order_form.png`, `dashboard.png`) to display them directly here on GitHub.
 
 ### 1. Order Placement Form
-![Order Placement Form](./frontend%20images/order_form.png)
+![Order Placement Form](./frontend%20images/screenshot.png)
 
 ### 2. Real-Time Order Status Dashboard
 ![Order Status Dashboard](./frontend%20images/dashboard.png)
