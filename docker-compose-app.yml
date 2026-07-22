@@ -46,6 +46,9 @@ services:
       - DATABASE_PASSWORD=root
       - ACTIVEMQ_HOST=activemq
       - ACTIVEMQ_PORT=61616
+      - PAYMENT_SERVICE_HOST=payment-service
+      - KITCHEN_SERVICE_HOST=kitchen-service
+      - DELIVERY_SERVICE_HOST=delivery-service
       - spring.jpa.hibernate.ddl-auto=update
     networks:
       - food_order_net
